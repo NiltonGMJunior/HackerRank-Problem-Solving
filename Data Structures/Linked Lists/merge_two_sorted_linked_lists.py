@@ -40,7 +40,31 @@ def mergeLists(head1, head2):
     # Null case
     if (head1 is None) and (head2 is None):
         return None
-    # TODO: Implement this
+    
+    ordered_nodes = []
+
+    cur1 = head1
+    cur2 = head2
+
+    while cur1 and cur2:
+        if cur1.data <= cur2.data:
+            ordered_nodes.append(cur1)
+            cur1 = cur1.next
+        else:
+            ordered_nodes.append(cur2)
+            cur2 = cur2.next
+    
+    while cur1:
+        ordered_nodes.append(cur1)
+        cur1 = cur1.next
+    while cur2:
+        ordered_nodes.append(cur2)
+        cur2 = cur2.next
+
+    for index, node in enumerate(ordered_nodes[:-1]):
+        node.next = ordered_nodes[index + 1]
+
+    return ordered_nodes[0]
 
 if __name__ == '__main__':
     fptr = open(os.environ['OUTPUT_PATH'], 'w')
