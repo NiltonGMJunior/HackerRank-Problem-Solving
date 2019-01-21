@@ -44,13 +44,16 @@ def reverse(head):
         return None
     
     cur = head
+    print(cur.data)
 
     while cur.next:
         cur.next, cur.prev = cur.prev, cur.next
         cur = cur.prev
+        print(cur.data)
     
     cur = cur.prev
     cur.next, cur.prev = cur.prev, cur.next
+    print(cur.data)
 
     return cur
 
