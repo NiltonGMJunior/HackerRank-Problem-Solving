@@ -42,15 +42,10 @@ self.info (the value of the node)
 """
 # TODO: Correct and understand better the following proposed solution
 
-def topView(root, side=0):
-    if root is None:
-        return 0
-    if side == 0 or side == -1:
-        topView(root.left, side=-1)
-    print(root.info, end=" ")
-    if side == 0 or side == +1:
-        topView(root.right, side=+1)
-    return
+def topView(root, side=0, left=0, right=0):
+    if root:
+        if root.left:
+            topView(root.left, side -= 1, left -= 1, max)
     
 
 tree = BinarySearchTree()
