@@ -11,6 +11,13 @@ struct node {
   
 };
 
+typedef struct queue {
+    struct node **data;
+    int capacity;
+    int first;
+    int last;
+} queue;
+
 struct node* insert( struct node* root, int data ) {
 		
 	if(root == NULL) {
@@ -51,10 +58,89 @@ struct node {
 };
 
 */
-void levelOrder(struct node *root) {
 
+queue* create_queue(int capacity)
+{
+    queue *new_queue = malloc(sizeof(queue));
+    if (new_queue == NULL) 
+    {
+        return NULL;
+    }
+    new_queue->data = malloc(sizeof(struct node*) * capacity);
+    if (new_queue->data == NULL) 
+    {
+        return NULL;
+    }
+    new_queue->capacity = capacity;
+    new_queue->first = -1;
+    new_queue->last = -1;
+    return new_queue;
 }
 
+queue* enqueue(queue* queue, struct node* data)
+{
+    // Empty queue
+    if (queue->first == -1) 
+    {
+        queue->first = 0;
+        queue->last = 0;
+        queue->data[0] = data;
+    }
+    // Full queue
+    else if ((1 + queue->last) % queue->capacity == queue->first)
+    {
+        return NULL;
+    }
+    else
+    {
+        queue->last = (1 + queue->last) % queue->capacity;
+        queue->data[queue->last] = data;
+    }
+    return queue;
+}
+
+struct node* dequeue(queue* queue)
+{
+    // Empty queue
+    if (queue->first == -1)
+    {
+        return NULL;
+    }
+    else
+    {
+        struct node* output = queue->data[queue->first];
+        if (queue->first == queue->last)
+        {
+            queue->first == -1;
+            queue->last == -1;
+        }
+        else
+        {
+            queue->first = (1 + queue->first) & queue->capacity;
+        }
+        return output;
+    }
+}
+
+void levelOrder(struct node *root) {
+    // Creates the queue that holds the nodes per level
+    // Arbitrarilly large queue
+    queue *queue = create_queue(100);
+    struct node *current_node = root;
+    while (current_node != NULL)
+    {
+        printf("%d ", current_node->data);
+        if (current_node->left != NULL)
+        {
+            queue = enqueue(queue, current_node->left);
+        }
+        if (current_node->right != NULL)
+        {
+            queue = enqueue(queue, current_node->right);
+        }
+        current_node = dequeue(queue);
+    }
+}
 
 int main() {
   
