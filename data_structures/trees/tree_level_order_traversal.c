@@ -61,12 +61,12 @@ struct node {
 
 queue* create_queue(int capacity)
 {
-    queue *new_queue = malloc(sizeof(queue));
+    queue *new_queue = (struct queue*) malloc(sizeof(queue));
     if (new_queue == NULL) 
     {
         return NULL;
     }
-    new_queue->data = malloc(sizeof(struct node*) * capacity);
+    new_queue->data = (struct node**) malloc(sizeof(struct node*) * capacity);
     if (new_queue->data == NULL) 
     {
         return NULL;
@@ -91,35 +91,36 @@ queue* enqueue(queue* queue, struct node* data)
     {
         return NULL;
     }
+    // Queue with spaces avaliable
     else
     {
         queue->last = (1 + queue->last) % queue->capacity;
         queue->data[queue->last] = data;
     }
+
     return queue;
 }
 
 struct node* dequeue(queue* queue)
 {
     // Empty queue
-    if (queue->first == -1)
+    if (queue->first == -1) return NULL;
+
+    struct node* output = queue->data[queue->first];
+    // In case there is only one element in queue
+    if (queue->first == queue->last)
     {
-        return NULL;
+        // Modifies queue to show that it is now empty
+        queue->first == -1;
+        queue->last == -1;
     }
     else
     {
-        struct node* output = queue->data[queue->first];
-        if (queue->first == queue->last)
-        {
-            queue->first == -1;
-            queue->last == -1;
-        }
-        else
-        {
-            queue->first = (1 + queue->first) & queue->capacity;
-        }
-        return output;
+        // Changes the pointer to the first element
+        queue->first = (1 + queue->first) % queue->capacity;
     }
+
+    return output;
 }
 
 void levelOrder(struct node *root) {
