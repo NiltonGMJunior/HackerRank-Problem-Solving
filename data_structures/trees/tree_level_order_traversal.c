@@ -18,7 +18,7 @@ typedef struct queue {
     int last;
 } queue;
 
-struct node* insert( struct node* root, int data ) {
+struct node* insert(struct node* root, int data) {
 		
 	if(root == NULL) {
 	
@@ -123,10 +123,24 @@ struct node* dequeue(queue* queue)
     return output;
 }
 
+void free_queue(queue *queue)
+{
+    if (queue != NULL)
+    {   
+        struct node* temp = dequeue(queue);
+        while (temp != NULL)
+        {
+            free(temp);
+            temp = dequeue(queue);
+        }
+        free(queue);
+    }
+}
+
 void levelOrder(struct node *root) {
     // Creates the queue that holds the nodes per level
     // Arbitrarilly large queue
-    queue *queue = create_queue(100);
+    queue *queue = create_queue(500);
     struct node *current_node = root;
     while (current_node != NULL)
     {
@@ -141,22 +155,49 @@ void levelOrder(struct node *root) {
         }
         current_node = dequeue(queue);
     }
+    free_queue(queue);
 }
 
 int main() {
-  
-    struct node* root = NULL;
-    
-    int t;
-    int data;
 
-    scanf("%d", &t);
-
-    while(t-- > 0) {
-        scanf("%d", &data);
-        root = insert(root, data);
+    queue *queue = create_queue(10);
+    for (int i = 0; i < 10; ++i)
+    {
+        struct node node;
+        node.data = i;
+        node.left = NULL;
+        node.right = NULL;
+        queue = enqueue(queue, &node);
+        if (queue != NULL)
+        {
+            printf("Enqueued %d\n", queue->data[queue->last]->data);
+            printf("First position: %d\n", queue->first);
+            printf("Last position: %d\n", queue->last);
+        }
     }
+
+    for (int i = 0; i < 11; ++i)
+    {
+        printf("First position: %d\n", queue->first);
+        printf("Last position: %d\n", queue->last);
+        struct node* node = dequeue(queue);
+        if (node != NULL)
+        {
+            printf("Dequeued %d\n", node->data);
+        }
+    }
+    // struct node* root = NULL;
+    
+    // int t;
+    // int data;
+
+    // scanf("%d", &t);
+
+    // while(t-- > 0) {
+    //     scanf("%d", &data);
+    //     root = insert(root, data);
+    // }
   
-	levelOrder(root);
-    return 0;
+	// levelOrder(root);
+    // return 0;
 }
