@@ -16,10 +16,75 @@ char *ltrim(char *);
 char *rtrim(char *);
 char **split_string(char *);
 
-// TODO: Finish this function
-void rotateLayer(int matrix_rows, int matrix_columns, int **matrix, int layer)
-{
+/*
+    The following code worked properly for relatively small input matrices.
+    According to HackerRank's judge, some large matrices produced the wrong output.
+    Some of these large matrices output were compared with the results produced by this program.
+    The comparison yielded no differences, and Iǜe failed to recognized the differences so far.
+    It should be noted that, in the case of large matrices, it is possible that proccess was killed before finishing.
+    There is no compilation or runtime error, and no timeout in the HackerRank website.
 
+    Exploring alternative solutions in the Discussion page of the problem could yield better implementations of the algorithm.
+ */
+
+void copyMatrix(int **source_matrix, int **dest_matrix, int matrix_rows, int matrix_columns)
+{
+    for (int row = 0; row < matrix_rows; ++row)
+        for (int col = 0; col < matrix_columns; ++col)
+            dest_matrix[row][col] = source_matrix[row][col];
+}
+
+void verifyPointer(void *pter)
+{
+    if (!pter)
+    {
+        printf("FAILED TO ALLOCATE MEMORY. EXITING PROGRAM...\n");
+        exit(-1);
+    }
+}
+
+int **rotateLayer(int matrix_rows, int matrix_columns, int **matrix, int layer)
+{
+    //  Temporary rotation matrix.
+    int **temp = (int **)(malloc(matrix_rows * sizeof(int *)));
+    verifyPointer(temp);
+
+    for (int row = 0; row < matrix_rows; ++row)
+    {
+        temp[row] = (int *)(malloc(matrix_columns * sizeof(int)));
+        verifyPointer(temp[row]);
+    }
+
+    copyMatrix(matrix, temp, matrix_rows, matrix_columns);
+
+    // Copy the elements in the leftmost column of the layer in their correct positions
+    for (int row = layer + 1; row < matrix_rows - layer; ++row)
+        temp[row][layer] = matrix[row - 1][layer];
+
+    // Copy the elements in the bottom row of the layer in their correct positions
+    for (int col = layer + 1; col < matrix_columns - layer; ++col)
+        temp[matrix_rows - layer - 1][col] = matrix[matrix_rows - layer - 1][col - 1];
+
+    // Copy the elements in the rightmost column of the layer in their correct positions
+    for (int row = matrix_rows - layer - 2; row > layer - 1; --row)
+        temp[row][matrix_columns - layer - 1] = matrix[row + 1][matrix_columns - layer - 1];
+
+    // Copy the elements in the upper row of the layer in their correct positions
+    for (int col = matrix_columns - layer - 2; col > layer - 1; --col)
+        temp[layer][col] = matrix[layer][col + 1];
+
+    // memcpy(matrix, temp, (matrix_rows * matrix_columns) * sizeof(int));
+    return temp;
+}
+
+void printMatrix(int matrix_rows, int matrix_columns, int **matrix)
+{
+    for (int row = 0; row < matrix_rows; ++row)
+    {
+        for (int col = 0; col < matrix_columns; ++col)
+            printf("%d ", matrix[row][col]);
+        printf("\n");
+    }
 }
 
 // Complete the matrixRotation function below.
@@ -28,8 +93,7 @@ void matrixRotation(int matrix_rows, int matrix_columns, int **matrix, int r)
     // Number of layers in the matrix.
     int num_layers = (1 + MIN(matrix_columns, matrix_rows)) / 2;
 
-    // If the outter layer of the matrix is l = 0, the the number of elements in any given layer is:
-    // num_elements = 2 * (n + m - 2 - 4 * l);
+    // If the outter layer of the matrix is l = 0, the the number of elements in any given layer is: 2 * (n + m - 2 - 4 * l);
 
     // Rotating a layer with k elements r times is the same as rotating the k elements r % k times.
 
@@ -38,8 +102,10 @@ void matrixRotation(int matrix_rows, int matrix_columns, int **matrix, int r)
     {
         num_elements = 2 * (matrix_rows + matrix_columns - 2 - 4 * layer);
         for (int rotation = 0; rotation < r % num_elements; ++rotation)
-            rotateLayer(matrix_rows, matrix_columns, matrix, layer);
+            matrix = rotateLayer(matrix_rows, matrix_columns, matrix, layer);
     }
+
+    printMatrix(matrix_rows, matrix_columns, matrix);
 }
 
 int main()
