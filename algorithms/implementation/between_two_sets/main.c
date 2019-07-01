@@ -25,22 +25,75 @@ int parse_int(char *);
  *  2. INTEGER_ARRAY b
  */
 
-int maxCommonDividerArray(int a_count, int *a)
-{
+/*
+    My thoughts on this problem:
+    I would first find the least common multiple (LCM) of array "a". Let's say this is k.
+    The numbers that would satisfy the first condition (numbers whose factors are the elements of "a") would all be multiples of k.
+    When this factor is found, we must count its multiples such that they're all facor
+ */
 
+int getMax(int a_count, int *a)
+{
+    int max = *a;
+    for (int i = 1; i < a_count; ++i)
+        if (a[i] > max)
+            max = a[i];
+    return max;
 }
 
-int leastCommonMultiple(int a_count, int *a)
+int mcd(int a_count, int *a)
 {
+    // Recursively searchs for the maximum common divider of the elements in a.
+    // Base case
+    if (a_count == 1)
+        return *a;
+
+    // Recursive step: find the mcd of *a and *(a + 1), replace *(a + 1) with the result and call mcd disregarding the first element.
+    if (*a == 0)
+        return mcd(a_count - 1, a + 1);
+
+    // This searchs for the mcd of the first two elements, puts the mcd in the second index of the array and 0 in the first. The function is recalled.
+    int temp = *(a + 1) % *a;
+    *(a + 1) = *a;
+    *a = temp;
+    return mcd(a_count, a);
+}
+
+int lcm(int a_count, int *a)
+{
+    if (a_count == 1)
+        return *a;
+
     int prod = 1;
     for (int i = 0; i < a_count; ++i)
         prod *= a[i];
-    
-    return prod / maxCommonDivider(a_count, a);
+
+    return prod / mcd(a_count, a);
 }
 
 int getTotalX(int a_count, int *a, int b_count, int *b)
 {
+    int factor = lcm(a_count, a);
+    
+    int max = getMax(b_count, b);
+
+    int count = 0, multiple = 1;
+
+    while (multiple * factor <= max)
+    {
+        int division_fail = 0;
+        for (int i = 0; i < b_count; ++i)
+            if (b[i] % (multiple * factor) != 0)
+            {
+                division_fail = 1;
+                break;
+            }
+        if (!division_fail)
+            count++;
+        multiple++;
+    }
+
+    return count;
 }
 
 int main()
