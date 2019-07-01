@@ -9,12 +9,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* readline();
-char* ltrim(char*);
-char* rtrim(char*);
-char** split_string(char*);
+char *readline();
+char *ltrim(char *);
+char *rtrim(char *);
+char **split_string(char *);
 
-int parse_int(char*);
+int parse_int(char *);
 
 /*
  * Complete the 'getTotalX' function below.
@@ -25,35 +25,51 @@ int parse_int(char*);
  *  2. INTEGER_ARRAY b
  */
 
-int getTotalX(int a_count, int* a, int b_count, int* b) {
+int maxCommonDividerArray(int a_count, int *a)
+{
+
+}
+
+int leastCommonMultiple(int a_count, int *a)
+{
+    int prod = 1;
+    for (int i = 0; i < a_count; ++i)
+        prod *= a[i];
     
+    return prod / maxCommonDivider(a_count, a);
+}
+
+int getTotalX(int a_count, int *a, int b_count, int *b)
+{
 }
 
 int main()
 {
-    FILE* fptr = fopen(getenv("OUTPUT_PATH"), "w");
+    FILE *fptr = fopen(getenv("OUTPUT_PATH"), "w");
 
-    char** first_multiple_input = split_string(rtrim(readline()));
+    char **first_multiple_input = split_string(rtrim(readline()));
 
     int n = parse_int(*(first_multiple_input + 0));
 
     int m = parse_int(*(first_multiple_input + 1));
 
-    char** arr_temp = split_string(rtrim(readline()));
+    char **arr_temp = split_string(rtrim(readline()));
 
-    int* arr = malloc(n * sizeof(int));
+    int *arr = malloc(n * sizeof(int));
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         int arr_item = parse_int(*(arr_temp + i));
 
         *(arr + i) = arr_item;
     }
 
-    char** brr_temp = split_string(rtrim(readline()));
+    char **brr_temp = split_string(rtrim(readline()));
 
-    int* brr = malloc(m * sizeof(int));
+    int *brr = malloc(m * sizeof(int));
 
-    for (int i = 0; i < m; i++) {
+    for (int i = 0; i < m; i++)
+    {
         int brr_item = parse_int(*(brr_temp + i));
 
         *(brr + i) = brr_item;
@@ -68,23 +84,27 @@ int main()
     return 0;
 }
 
-char* readline() {
+char *readline()
+{
     size_t alloc_length = 1024;
     size_t data_length = 0;
 
-    char* data = malloc(alloc_length);
+    char *data = malloc(alloc_length);
 
-    while (true) {
-        char* cursor = data + data_length;
-        char* line = fgets(cursor, alloc_length - data_length, stdin);
+    while (true)
+    {
+        char *cursor = data + data_length;
+        char *line = fgets(cursor, alloc_length - data_length, stdin);
 
-        if (!line) {
+        if (!line)
+        {
             break;
         }
 
         data_length += strlen(cursor);
 
-        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n') {
+        if (data_length < alloc_length - 1 || data[data_length - 1] == '\n')
+        {
             break;
         }
 
@@ -92,27 +112,35 @@ char* readline() {
 
         data = realloc(data, alloc_length);
 
-        if (!data) {
+        if (!data)
+        {
             data = '\0';
 
             break;
         }
     }
 
-    if (data[data_length - 1] == '\n') {
+    if (data[data_length - 1] == '\n')
+    {
         data[data_length - 1] = '\0';
 
         data = realloc(data, data_length);
 
-        if (!data) {
+        if (!data)
+        {
             data = '\0';
         }
-    } else {
+    }
+    else
+    {
         data = realloc(data, data_length + 1);
 
-        if (!data) {
+        if (!data)
+        {
             data = '\0';
-        } else {
+        }
+        else
+        {
             data[data_length] = '\0';
         }
     }
@@ -120,34 +148,42 @@ char* readline() {
     return data;
 }
 
-char* ltrim(char* str) {
-    if (!str) {
+char *ltrim(char *str)
+{
+    if (!str)
+    {
         return '\0';
     }
 
-    if (!*str) {
+    if (!*str)
+    {
         return str;
     }
 
-    while (*str != '\0' && isspace(*str)) {
+    while (*str != '\0' && isspace(*str))
+    {
         str++;
     }
 
     return str;
 }
 
-char* rtrim(char* str) {
-    if (!str) {
+char *rtrim(char *str)
+{
+    if (!str)
+    {
         return '\0';
     }
 
-    if (!*str) {
+    if (!*str)
+    {
         return str;
     }
 
-    char* end = str + strlen(str) - 1;
+    char *end = str + strlen(str) - 1;
 
-    while (end >= str && isspace(*end)) {
+    while (end >= str && isspace(*end))
+    {
         end--;
     }
 
@@ -156,16 +192,19 @@ char* rtrim(char* str) {
     return str;
 }
 
-char** split_string(char* str) {
-    char** splits = NULL;
-    char* token = strtok(str, " ");
+char **split_string(char *str)
+{
+    char **splits = NULL;
+    char *token = strtok(str, " ");
 
     int spaces = 0;
 
-    while (token) {
-        splits = realloc(splits, sizeof(char*) * ++spaces);
+    while (token)
+    {
+        splits = realloc(splits, sizeof(char *) * ++spaces);
 
-        if (!splits) {
+        if (!splits)
+        {
             return splits;
         }
 
@@ -177,11 +216,13 @@ char** split_string(char* str) {
     return splits;
 }
 
-int parse_int(char* str) {
-    char* endptr;
+int parse_int(char *str)
+{
+    char *endptr;
     int value = strtol(str, &endptr, 10);
 
-    if (endptr == str || *endptr != '\0') {
+    if (endptr == str || *endptr != '\0')
+    {
         exit(EXIT_FAILURE);
     }
 
