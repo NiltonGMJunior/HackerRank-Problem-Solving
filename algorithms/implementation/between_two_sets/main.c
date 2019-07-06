@@ -32,31 +32,31 @@ int parse_int(char *);
     When this factor is found, we must count its multiples such that they're all facor
  */
 
-int getMax(int a_count, int *a)
+int getMin(int a_count, int *a)
 {
-    int max = *a;
+    int min = *a;
     for (int i = 1; i < a_count; ++i)
-        if (a[i] > max)
-            max = a[i];
-    return max;
+        if (a[i] < min)
+            min = a[i];
+    return min;
 }
 
-int mcd(int a_count, int *a)
+int gcd(int a_count, int *a)
 {
     // Recursively searchs for the maximum common divider of the elements in a.
     // Base case
     if (a_count == 1)
         return *a;
 
-    // Recursive step: find the mcd of *a and *(a + 1), replace *(a + 1) with the result and call mcd disregarding the first element.
+    // Recursive step: find the gcd of *a and *(a + 1), replace *(a + 1) with the result and call gcd disregarding the first element.
     if (*a == 0)
-        return mcd(a_count - 1, a + 1);
+        return gcd(a_count - 1, a + 1);
 
-    // This searchs for the mcd of the first two elements, puts the mcd in the second index of the array and 0 in the first. The function is recalled.
+    // This searchs for the gcd of the first two elements, puts the gcd in the second index of the array and 0 in the first. The function is recalled.
     int temp = *(a + 1) % *a;
     *(a + 1) = *a;
     *a = temp;
-    return mcd(a_count, a);
+    return gcd(a_count, a);
 }
 
 int lcm(int a_count, int *a)
@@ -68,30 +68,30 @@ int lcm(int a_count, int *a)
     for (int i = 0; i < a_count; ++i)
         prod *= a[i];
 
-    return prod / mcd(a_count, a);
+    return prod / gcd(a_count, a);
 }
 
 int getTotalX(int a_count, int *a, int b_count, int *b)
 {
     int factor = lcm(a_count, a);
     
-    int max = getMax(b_count, b);
+    int min = getMin(b_count, b);
 
-    int count = 0, multiple = 1;
+    int count = 0, iterations = min / factor;
 
-    while (multiple * factor <= max)
+    while (iterations--)
     {
-        int division_fail = 0;
+        int valid = 0;
         for (int i = 0; i < b_count; ++i)
-            if (b[i] % (multiple * factor) != 0)
-            {
-                division_fail = 1;
+        {
+            if (b[i] % (factor * (iterations + 1)))
+                valid++;
+            else
                 break;
-            }
-        if (!division_fail)
+        }
+        if (valid == b_count)
             count++;
-        multiple++;
-    }
+    }   
 
     return count;
 }
